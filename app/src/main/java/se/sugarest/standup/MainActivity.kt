@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Thread.sleep(2000)
+
         countDownTimer = object : CountDownTimer(SECONDS * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
