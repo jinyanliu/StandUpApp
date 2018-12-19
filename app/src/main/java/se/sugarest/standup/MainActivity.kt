@@ -10,13 +10,16 @@ import android.util.Log
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 const val LOG_TAG = "StandUp"
 const val VOICE_RECOGNITION_REQUEST_CODE = 1234
 
 class MainActivity : AppCompatActivity() {
 
     private var speak: TextToSpeech? = null
+
+    private var teamMembers = listOf("Olivier", "Elviss", "Jinyan", "Vlonjat")
+
+    private var currentPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +31,8 @@ class MainActivity : AppCompatActivity() {
                 if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Log.e(LOG_TAG, "Language is not supported")
                 } else {
-                    speak?.speak("Hello! A, please", TextToSpeech.QUEUE_FLUSH, null, "0")
+                    val toSpeak = "Hello team! " + teamMembers[currentPosition] + ", please."
+                    speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
                 }
                 speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onDone(utteranceId: String) {
@@ -66,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
             if (matches.contains("next")) {
                 Log.i(LOG_TAG, "Next captured!")
+                currentPosition += 1
 
                 speak = TextToSpeech(this@MainActivity, TextToSpeech.OnInitListener { status ->
                     if (status == TextToSpeech.SUCCESS) {
@@ -73,7 +78,32 @@ class MainActivity : AppCompatActivity() {
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                             Log.e(LOG_TAG, "Language is not supported")
                         } else {
-                            speak?.speak("Thanks! B, please", TextToSpeech.QUEUE_FLUSH, null, "1")
+
+                            if (currentPosition >= teamMembers.size) {
+                                val toSpeak = "Stand up finished! Let's do it!"
+                                speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+                                speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                                    override fun onDone(utteranceId: String) {
+                                        Log.i(LOG_TAG, "Activity finished")
+                                        finish()
+                                    }
+
+                                    override fun onError(utteranceId: String) {}
+                                    override fun onStart(utteranceId: String) {}
+                                })
+                            } else {
+                                val toSpeak = "Thanks! " + teamMembers[currentPosition] + ", please."
+                                speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+                                speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                                    override fun onDone(utteranceId: String) {
+                                        Log.i(LOG_TAG, "TTS finished")
+                                        startVoiceRecognitionActivity()
+                                    }
+
+                                    override fun onError(utteranceId: String) {}
+                                    override fun onStart(utteranceId: String) {}
+                                })
+                            }
                         }
                     } else {
                         Log.e(LOG_TAG, "TTS Initialization Failed!")
