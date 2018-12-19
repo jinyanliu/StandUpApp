@@ -29,26 +29,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         countDownTimer = object : CountDownTimer(SECONDS * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 Log.i(LOG_TAG, "Time is up!")
                 finishActivity(VOICE_RECOGNITION_REQUEST_CODE)
                 currentPosition += 1
-                val toSpeak =
-                    "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + teamMembers[currentPosition] + " please."
-                speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
-                speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onDone(utteranceId: String) {
-                        Log.i(LOG_TAG, "TTS finished")
-                        startVoiceRecognitionActivity()
-                    }
 
-                    override fun onError(utteranceId: String) {}
-                    override fun onStart(utteranceId: String) {}
-                })
+
+                if (currentPosition == teamMembers.size) {
+                    val toSpeak =
+                        "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + " OK! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
+                    finishStandUp(toSpeak)
+                } else {
+                    val toSpeak =
+                        "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + teamMembers[currentPosition] + " please."
+                    speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+                    speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                        override fun onDone(utteranceId: String) {
+                            Log.i(LOG_TAG, "TTS finished")
+                            startTimer()
+                            startVoiceRecognitionActivity()
+                        }
+
+                        override fun onError(utteranceId: String) {}
+                        override fun onStart(utteranceId: String) {}
+                    })
+                }
             }
         }
 
@@ -77,10 +84,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun startTimer() {
 
-        countDownTimer?.start()
-    }
 
     private fun startVoiceRecognitionActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -124,27 +128,16 @@ class MainActivity : AppCompatActivity() {
                     Log.e(LOG_TAG, "Language is not supported")
                 } else {
 
-                    if (currentPosition >= teamMembers.size) {
-
-                        getDayOfTheWeek()
-
+                    if (currentPosition == teamMembers.size) {
                         val toSpeak = "OK! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
-                        speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
-                        speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                            override fun onDone(utteranceId: String) {
-                                Log.i(LOG_TAG, "Activity finished")
-                                finish()
-                            }
-
-                            override fun onError(utteranceId: String) {}
-                            override fun onStart(utteranceId: String) {}
-                        })
+                        finishStandUp(toSpeak)
                     } else {
                         val toSpeak = "Thanks! " + teamMembers[currentPosition] + ", please."
                         speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
                         speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                             override fun onDone(utteranceId: String) {
                                 Log.i(LOG_TAG, "TTS finished")
+                                startTimer()
                                 startVoiceRecognitionActivity()
                             }
 
@@ -157,6 +150,23 @@ class MainActivity : AppCompatActivity() {
                 Log.e(LOG_TAG, "TTS Initialization Failed!")
             }
         })
+    }
+
+    private fun finishStandUp(toSpeak: String) {
+        getDayOfTheWeek()
+        speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+        speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onDone(utteranceId: String) {
+                finish()
+            }
+
+            override fun onError(utteranceId: String) {}
+            override fun onStart(utteranceId: String) {}
+        })
+    }
+
+    private fun startTimer() {
+        countDownTimer?.start()
     }
 
     private fun getDayOfTheWeek(): String {
