@@ -2,6 +2,7 @@ package se.sugarest.standup
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -12,10 +13,13 @@ import kotlin.collections.ArrayList
 
 const val LOG_TAG = "StandUp"
 const val VOICE_RECOGNITION_REQUEST_CODE = 1234
+const val SECONDS = 5L
 
 class MainActivity : AppCompatActivity() {
 
     private var speak: TextToSpeech? = null
+
+    private var countDownTimer: CountDownTimer? = null
 
     private var teamMembers = listOf("Olivier", "Elviss", "Jinyan", "Vlonjat")
 
@@ -24,6 +28,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+        countDownTimer = object : CountDownTimer(SECONDS * 1000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                Log.i(LOG_TAG, "Time is up!")
+                finishActivity(VOICE_RECOGNITION_REQUEST_CODE)
+                currentPosition += 1
+                val toSpeak =
+                    "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + teamMembers[currentPosition] + " please."
+                speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+                speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onDone(utteranceId: String) {
+                        Log.i(LOG_TAG, "TTS finished")
+                        startVoiceRecognitionActivity()
+                    }
+
+                    override fun onError(utteranceId: String) {}
+                    override fun onStart(utteranceId: String) {}
+                })
+            }
+        }
 
         speak = TextToSpeech(this@MainActivity, TextToSpeech.OnInitListener { status ->
             if (status == TextToSpeech.SUCCESS) {
@@ -37,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                 speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onDone(utteranceId: String) {
                         Log.i(LOG_TAG, "TTS finished")
+                        startTimer()
                         startVoiceRecognitionActivity()
                     }
 
@@ -47,6 +75,11 @@ class MainActivity : AppCompatActivity() {
                 Log.e(LOG_TAG, "TTS Initialization Failed!")
             }
         })
+    }
+
+    private fun startTimer() {
+
+        countDownTimer?.start()
     }
 
     private fun startVoiceRecognitionActivity() {
@@ -81,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun next() {
         Log.i(LOG_TAG, "Next captured!")
+        countDownTimer?.cancel()
         currentPosition += 1
 
         speak = TextToSpeech(this@MainActivity, TextToSpeech.OnInitListener { status ->
@@ -141,9 +175,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
+    override fun onDestroy() {
         speak?.stop()
         speak?.shutdown()
-        super.onPause()
+        countDownTimer?.cancel()
+        super.onDestroy()
     }
 }
