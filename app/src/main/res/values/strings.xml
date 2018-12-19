@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">StandUp</string>
+
+    <string name="hello_team">Hello calling team!</string>
+</resources>
