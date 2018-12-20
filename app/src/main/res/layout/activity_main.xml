@@ -10,56 +10,67 @@
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_one"
+              android:id="@+id/tmOne"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_two"
+              android:id="@+id/tmTwo"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_three"
+              android:id="@+id/tmThree"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_four"
+              android:id="@+id/tmFour"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_five"
+              android:id="@+id/tmFive"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_six"
+              android:id="@+id/tmSix"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_seven"
+              android:id="@+id/tmSeven"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_eight"
+              android:id="@+id/tmEight"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_nine"
+              android:id="@+id/tmNine"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_ten"
+              android:id="@+id/tmTen"
               style="@style/TextStyle"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/tm_eleven"
+              android:id="@+id/tmEleven"
               style="@style/TextStyle"/>
 
 </LinearLayout>
