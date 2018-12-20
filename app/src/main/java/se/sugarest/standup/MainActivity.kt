@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 currentPosition += 1
                 if (currentPosition == teamMembers.size) {
                     val toSpeak =
-                        "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + " OK! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
+                        "Thanks " + teamMembers[currentPosition - 1] + "! Time is up! " + " OK! You are the last one! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
                     finishStandUp(toSpeak)
                 } else {
                     val toSpeak =
