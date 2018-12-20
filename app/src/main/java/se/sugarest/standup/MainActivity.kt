@@ -13,7 +13,7 @@ import kotlin.collections.ArrayList
 
 const val LOG_TAG = "StandUp"
 const val VOICE_RECOGNITION_REQUEST_CODE = 1234
-const val SECONDS = 5L
+const val SECONDS = 10L
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
                     speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
                     speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                         override fun onDone(utteranceId: String) {
-                            Log.i(LOG_TAG, "TTS finished")
                             startTimer()
                             startVoiceRecognitionActivity()
                         }
@@ -72,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onDone(utteranceId: String) {
-                        Log.i(LOG_TAG, "TTS finished")
                         startTimer()
                         startVoiceRecognitionActivity()
                     }
@@ -85,8 +83,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-
 
     private fun startVoiceRecognitionActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -109,12 +105,35 @@ class MainActivity : AppCompatActivity() {
 
             for (item in matches) {
                 for (word in item.split(" ")) {
-                    if (word.contains("next")) {
+                    if (word.contains("next") || word.contains("yes")) {
                         next()
                         return
                     }
                 }
             }
+
+            speak = TextToSpeech(this@MainActivity, TextToSpeech.OnInitListener { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    val result = speak?.setLanguage(Locale.US)
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e(LOG_TAG, "Language is not supported")
+                    } else {
+                        val toSpeak = "Are you finished, " + teamMembers[currentPosition] + "?"
+                        speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
+                        speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                            override fun onDone(utteranceId: String) {
+                                startVoiceRecognitionActivity()
+                            }
+
+                            override fun onError(utteranceId: String) {}
+                            override fun onStart(utteranceId: String) {}
+                        })
+
+                    }
+                } else {
+                    Log.e(LOG_TAG, "TTS Initialization Failed!")
+                }
+            })
         }
     }
 
@@ -131,14 +150,15 @@ class MainActivity : AppCompatActivity() {
                 } else {
 
                     if (currentPosition == teamMembers.size) {
-                        val toSpeak = "OK! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
+                        val toSpeak =
+                            "OK! You are the last one! Stand up finished! " + getDayOfTheWeek() + "! Let's do it!"
                         finishStandUp(toSpeak)
                     } else {
-                        val toSpeak = "Thanks! " + teamMembers[currentPosition] + ", please."
+                        val toSpeak =
+                            "Thanks, " + teamMembers[currentPosition - 1] + "! " + teamMembers[currentPosition] + ", please."
                         speak?.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, "0")
                         speak?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                             override fun onDone(utteranceId: String) {
-                                Log.i(LOG_TAG, "TTS finished")
                                 startTimer()
                                 startVoiceRecognitionActivity()
                             }
