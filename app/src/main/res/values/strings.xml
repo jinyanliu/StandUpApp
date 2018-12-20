@@ -2,4 +2,16 @@
     <string name="app_name">Morning</string>
 
     <string name="hello_team">Hello calling team!</string>
+    <string name="tm_one">1 Olivier</string>
+    <string name="tm_two">2 Elviss</string>
+    <string name="tm_three">3 Jinyan</string>
+    <string name="tm_four">4 Vlonjat</string>
+    <string name="tm_five">5 Denys</string>
+    <string name="tm_six">6 Ilya</string>
+    <string name="tm_seven">7 Piotr</string>
+    <string name="tm_eight">8 Evgenia</string>
+    <string name="tm_nine">9 Medo</string>
+    <string name="tm_ten">10 Gaurav</string>
+    <string name="tm_eleven">11 Petter</string>
+
 </resources>
