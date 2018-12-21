@@ -1,6 +1,6 @@
 # StandUpApp
 
-Nowadays everyone is talking about Virtual Reality. Everything becomes Virtual. So I have got this idea to introduce a virtual team member to out daily stand up. I hope this will make our stand up more fun and more efficient.
+Nowadays everyone is talking about Virtual Reality. Everything becomes Virtual. So I have got this idea to introduce a virtual team member to our daily stand up. I hope this will make our stand up more fun and more efficient.
 
 So here is what this demo is about: I will talk to this app via voice recognition, and the app will greet each team member and set a timer for each member's talk time. 
 For example, in real life, we might set it to 2 minutes. But today in this demo, I have set it to 10 seconds, so we can move faster.
